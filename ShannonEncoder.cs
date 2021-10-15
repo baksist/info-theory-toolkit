@@ -29,19 +29,47 @@ namespace info_theory_toolkit
         {
             var alphabetInfo = new LetterStats(Message).GetProbInfo().OrderBy(x => x.Value);
             ResultTable = new ConsoleTable(Headers);
+            CodeDict = new Dictionary<char, string>();
             double sum = 0;
             var sum_bin = "";
             foreach (var item in alphabetInfo)
             {
                 var log = -1 * Math.Log2(item.Value);
-                var length = Math.Round(log);
-                /*long m = BitConverter.DoubleToInt64Bits(sum);
-                sum_bin = Convert.ToString(m, 2);*/
+                var length = (int) Math.Round(log);
+                var sum_round = Math.Round(sum, 3);
+                sum_bin = FloatToBin(sum_round);
+                var sum_trunc = sum_bin.Substring(0, 2 + length);
+                var code = sum_bin.Substring(2, length);
                 ResultTable.AddRow(item.Key, Math.Round(item.Value, 3), Math.Round(log,3), 
-                    length, Math.Round(sum,3), sum_bin, 0);
+                    length, sum_round, sum_trunc, code);
                 sum += item.Value;
+                CodeDict.Add(item.Key, code);
             }
             ResultTable.Write();
+            PrintEncMessage();
+        }
+
+        public void PrintEncMessage()
+        {
+            foreach (var c in Message)
+            {
+                if (CodeDict.Keys.Contains(c))
+                    Console.Write(CodeDict[c] + " ");
+            }
+            Console.WriteLine();
+        }
+
+        private string FloatToBin(double x)
+        {
+            string result = "0.";
+            for (var i = 0; i < 23; i++)
+            {
+                x = x * 2;
+                var whole = Math.Truncate(x);
+                result += whole.ToString();
+                x = x - whole;
+            }
+            return result;
         }
 
     }

@@ -24,6 +24,11 @@ namespace info_theory_toolkit
                 table.AddRow(st.Stats[0], st.Stats[1], st.Stats[2], st.Stats[3], st.Stats[4]);
             }
             table.Write();
+            
+            Console.WriteLine("Введите сообщение:");
+            var msg_coding = Console.ReadLine();
+            var enc = new ShannonEncoder(msg_coding);
+            enc.Calculate();
         }
     }
 }
